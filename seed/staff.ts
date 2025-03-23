@@ -1,7 +1,7 @@
 import { Staff } from "../shared/type";
 import { createStaff } from "../shared/util";
 
-export const Movies: Staff[] = [
+export const Staffs: Staff[] = [
     createStaff({
         staffId: "user001", 
         staffName: "Duan Li",

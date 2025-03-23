@@ -4,7 +4,9 @@ import * as lambdanode from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as apig from "aws-cdk-lib/aws-apigateway";
-import * as custom from 'aws-cdk-lib/custom-resources'
+import * as custom from 'aws-cdk-lib/custom-resources';
+import { generateBatch } from '../shared/util';
+import { Staffs } from '../seed/staff';
 
 
 export class DistributedSystemAssignment1Stack extends cdk.Stack {
@@ -67,7 +69,23 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
               apiKeyRequired: true,
               });
              
-             
+              //自动化播种
+              new custom.AwsCustomResource(this, 'SeedStaffsData', {
+                onCreate: {
+          
+                  service: 'DynamoDB', 
+                  action: 'batchWriteItem',
+                  parameters: {
+                    RequestItems: {
+                      [table.tableName]: generateBatch(Staffs), 
+                    },
+                  },
+                  physicalResourceId: custom.PhysicalResourceId.of('SeedStaffsData'), 
+                },
+                policy: custom.AwsCustomResourcePolicy.fromSdkCalls({
+                  resources: [table.tableArn],
+                }),
+              });
              
               }
              }
