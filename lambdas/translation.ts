@@ -14,20 +14,20 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (!staffId || !staffName || !language) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Missing movieId, title, or language in request' }),
+        body: JSON.stringify({ error: 'Missing staffId, title, or language in request' }),
       };
     }
 
-    // 获取图书记录
+    // get staff record
     const { Item } = await dynamo.get({
       TableName: TABLE_NAME,
-      Key: { movieId: staffId, title: staffName },
+      Key: { staffId, staffName },
     }).promise();
 
     if (!Item) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: 'movie not found' }),
+        body: JSON.stringify({ error: 'staff not found' }),
       };
     }
 

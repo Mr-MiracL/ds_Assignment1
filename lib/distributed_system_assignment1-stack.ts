@@ -80,14 +80,21 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
               },
             });
              
-              //赋予权限
+              //create permission
               table.grantWriteData(postStaffFn);
               table.grantReadData(getStaffsFn);
               table.grantReadData(getStaffFn);
               table.grantWriteData(updateStaffFn);
               table.grantReadWriteData(translateStaffFn);
+
+              translateStaffFn.addToRolePolicy( 
+                new cdk.aws_iam.PolicyStatement({ 
+                  actions: ['translate:TranslateText'], 
+                  resources: ['*'], 
+                })
+              );
              
-              //创建API权限管理
+              //create api management
               const api = new apig.RestApi(this, 'StaffApi', {
               restApiName: "Staff Service",
               description: 'staffs Api',
@@ -106,7 +113,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
           
               const apiKey = api.addApiKey('StaffApiKey');
              
-              //创建使用计划
+              //use plan
               const plan = api.addUsagePlan("UsagePlan",{
               name: 'BasicUsagePlan',
               throttle: { rateLimit: 10, burstLimit: 2 },
@@ -142,7 +149,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
           
             translation.addMethod('GET', new apig.LambdaIntegration(translateStaffFn));
 
-              //自动化播种
+              //autoSeeding
               new custom.AwsCustomResource(this, 'SeedStaffsData', {
                 onCreate: {
           

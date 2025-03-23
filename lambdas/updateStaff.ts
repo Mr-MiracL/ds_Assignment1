@@ -47,12 +47,12 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Movie updated', updatedItem: result.Attributes }),
+      body: JSON.stringify({ message: 'staff updated', updatedItem: result.Attributes }),
     };
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to update movie', detail: (err as Error).message}),
+      body: JSON.stringify({ error: 'Failed to update staff', detail: (err as Error).message}),
     };
   }
 };

@@ -37,7 +37,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to fetch Movie', detail: (err as Error).message }),
+      body: JSON.stringify({ error: 'Failed to fetch Staff', detail: (err as Error).message }),
     };
   }
 };
