@@ -85,7 +85,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
               table.grantReadData(getStaffsFn);
               table.grantReadData(getStaffFn);
               table.grantWriteData(updateStaffFn);
-              table.grantReadWriteData(translateMovieFn);
+              table.grantReadWriteData(translateStaffFn);
              
               //创建API权限管理
               const api = new apig.RestApi(this, 'StaffApi', {
