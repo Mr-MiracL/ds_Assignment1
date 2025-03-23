@@ -19,6 +19,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       tableName:'Staff',
           });
+
            const postStaffFn = new lambdanode.NodejsFunction(this, 'PostStaffFunction', {
              runtime:lambda.Runtime.NODEJS_18_X,
              architecture: lambda.Architecture.ARM_64,
@@ -30,9 +31,22 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
              REGION: 'eu-west-1'
              }
              })
+
+             const getStaffsFn = new lambdanode.NodejsFunction(this, 'GetMoviesFunction', {
+              runtime:lambda.Runtime.NODEJS_18_X,
+              architecture: lambda.Architecture.ARM_64,
+              entry: `${__dirname}/../lambdas/getStaffs.ts`,
+              timeout: cdk.Duration.seconds(10),
+              memorySize:128,
+              environment:{
+                TABLE_NAME: table.tableName,
+                REGION: 'eu-west-1'
+              }
+            })
              
               //赋予权限
               table.grantWriteData(postStaffFn);
+              table.grantReadData(getStaffsFn)
              
               //创建API权限管理
               const api = new apig.RestApi(this, 'StaffApi', {
@@ -68,6 +82,10 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
               staffs.addMethod('POST', new apig.LambdaIntegration(postStaffFn),{
               apiKeyRequired: true,
               });
+
+              staffs.addMethod('GET', new apig.LambdaIntegration(getStaffsFn),{
+                apiKeyRequired: true,
+              })
              
               //自动化播种
               new custom.AwsCustomResource(this, 'SeedStaffsData', {
