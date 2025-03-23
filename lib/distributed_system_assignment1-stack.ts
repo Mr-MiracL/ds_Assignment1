@@ -140,7 +140,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
               .addResource('{staffName}')
               .addResource('translation');
           
-            // translation.addMethod('GET', new apig.LambdaIntegration(translateStaffFn));
+            translation.addMethod('GET', new apig.LambdaIntegration(translateStaffFn));
 
               //自动化播种
               new custom.AwsCustomResource(this, 'SeedStaffsData', {
