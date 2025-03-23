@@ -32,7 +32,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
              }
              })
 
-             const getStaffsFn = new lambdanode.NodejsFunction(this, 'GetMoviesFunction', {
+             const getStaffsFn = new lambdanode.NodejsFunction(this, 'GetStaffFunction', {
               runtime:lambda.Runtime.NODEJS_18_X,
               architecture: lambda.Architecture.ARM_64,
               entry: `${__dirname}/../lambdas/getStaffs.ts`,
@@ -68,7 +68,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
               },
             });
         
-            const translateStaffFn = new lambdanode.NodejsFunction(this, 'TranslateMovieFunction', {
+            const translateStaffFn = new lambdanode.NodejsFunction(this, 'TranslateStaffFunction', {
               runtime: lambda.Runtime.NODEJS_18_X,
               architecture: lambda.Architecture.ARM_64,
               entry: `${__dirname}/../lambdas/translation.ts`,
