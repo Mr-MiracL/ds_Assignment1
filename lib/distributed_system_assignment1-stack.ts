@@ -68,7 +68,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
               },
             });
         
-            const translateMovieFn = new lambdanode.NodejsFunction(this, 'TranslateMovieFunction', {
+            const translateStaffFn = new lambdanode.NodejsFunction(this, 'TranslateMovieFunction', {
               runtime: lambda.Runtime.NODEJS_18_X,
               architecture: lambda.Architecture.ARM_64,
               entry: `${__dirname}/../lambdas/translation.ts`,
@@ -140,7 +140,7 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
               .addResource('{staffName}')
               .addResource('translation');
           
-            translation.addMethod('GET', new apig.LambdaIntegration(translateMovieFn));
+            // translation.addMethod('GET', new apig.LambdaIntegration(translateStaffFn));
 
               //自动化播种
               new custom.AwsCustomResource(this, 'SeedStaffsData', {
