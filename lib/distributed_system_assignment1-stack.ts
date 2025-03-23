@@ -55,11 +55,37 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
                 REGION: 'eu-west-1',
               },
             });
+
+            const updateStaffFn = new lambdanode.NodejsFunction(this, 'UpdateStaffFunction', {
+              runtime: lambda.Runtime.NODEJS_18_X,
+              architecture: lambda.Architecture.ARM_64,
+              entry: `${__dirname}/../lambdas/updateStaff.ts`,
+              timeout: cdk.Duration.seconds(10),
+              memorySize: 128,
+              environment: {
+                TABLE_NAME: table.tableName,
+                REGION: 'eu-west-1',
+              },
+            });
+        
+            const translateMovieFn = new lambdanode.NodejsFunction(this, 'TranslateMovieFunction', {
+              runtime: lambda.Runtime.NODEJS_18_X,
+              architecture: lambda.Architecture.ARM_64,
+              entry: `${__dirname}/../lambdas/translation.ts`,
+              timeout: cdk.Duration.seconds(10),
+              memorySize: 128,
+              environment: {
+                TABLE_NAME: table.tableName,
+                REGION: 'eu-west-1',
+              },
+            });
              
               //赋予权限
               table.grantWriteData(postStaffFn);
               table.grantReadData(getStaffsFn);
               table.grantReadData(getStaffFn);
+              table.grantWriteData(updateStaffFn);
+              table.grantReadWriteData(translateMovieFn);
              
               //创建API权限管理
               const api = new apig.RestApi(this, 'StaffApi', {
@@ -105,6 +131,17 @@ export class DistributedSystemAssignment1Stack extends cdk.Stack {
                 apiKeyRequired: true,
               });
              
+              staffs.addMethod('PUT',new apig.LambdaIntegration(updateStaffFn),{
+                apiKeyRequired: true,
+              });
+          
+              const translation = staffs
+              .addResource('{staffId}')
+              .addResource('{staffName}')
+              .addResource('translation');
+          
+            translation.addMethod('GET', new apig.LambdaIntegration(translateMovieFn));
+
               //自动化播种
               new custom.AwsCustomResource(this, 'SeedStaffsData', {
                 onCreate: {
